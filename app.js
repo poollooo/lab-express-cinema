@@ -9,7 +9,6 @@ require('./db')
 // https://www.npmjs.com/package/express
 const express = require('express')
 const Movie = require('./models/Movie.model')
-const PORT = '3002'
 
 
 const app = express()
@@ -28,9 +27,6 @@ app.locals.title = `${capitalized(projectName)}- Generated with Ironlauncher`
 // 👇 Start handling routes here
 const router = require('./routes/index')
 app.use('/', router)
-app.listen(PORT, () => {
-  console.log(`Server is rocking @ http://localhost:${PORT}`)
-})
 
 router.get('/movies', async (req, res) => {
   const allMovies = await Movie.find().select('title director')
