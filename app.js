@@ -8,8 +8,12 @@ require('./db')
 // Handles http requests (express is node js framework)
 // https://www.npmjs.com/package/express
 const express = require('express')
+const Movie = require('./models/Movie.model')
+const PORT = '3002'
+
 
 const app = express()
+app.use(express.json())
 
 // ℹ️ This function is getting exported from the config folder. It runs most middlewares
 require('./config')(app)
@@ -22,8 +26,21 @@ const capitalized = (string) =>
 app.locals.title = `${capitalized(projectName)}- Generated with Ironlauncher`
 
 // 👇 Start handling routes here
-const index = require('./routes/index')
-app.use('/', index)
+const router = require('./routes/index')
+app.use('/', router)
+app.listen(PORT, () => {
+  console.log(`Server is rocking @ http://localhost:${PORT}`)
+})
+
+router.get('/movies', async (req, res) => {
+  const allMovies = await Movie.find().select('title director')
+  res.json(allMovies)
+})
+
+router.get('/movies/:id', async (req, res) => {
+  const movieById = await Movie.findById(req.params.id)
+  res.json({ movieById })
+})
 
 // ❗ To handle errors. Routes that don't exist or errors that you handle in specific routes
 require('./error-handling')(app)
